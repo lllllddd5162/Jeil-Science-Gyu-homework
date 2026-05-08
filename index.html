@@ -3,808 +3,517 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>과제 제출 · 물리학반</title>
+  <title>과제 제출 · 제일학원</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      min-height: 100vh; background: #f8fafc;
-      display: flex; flex-direction: column; align-items: center;
-      padding: 24px 16px 48px;
-    }
-    .header {
-      width: 100%; max-width: 480px;
-      text-align: center; margin-bottom: 28px;
-    }
-    .logo { font-size: 40px; margin-bottom: 8px; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; min-height: 100vh; background: #f8fafc; display: flex; flex-direction: column; align-items: center; padding: 24px 16px 48px; }
+    .header { width: 100%; max-width: 480px; text-align: center; margin-bottom: 24px; }
+    .logo { font-size: 36px; margin-bottom: 6px; }
     .title { font-size: 20px; font-weight: 900; color: #1e293b; }
     .subtitle { font-size: 12px; color: #94a3b8; font-weight: 600; margin-top: 4px; }
-
-    .card {
-      width: 100%; max-width: 480px;
-      background: #fff; border-radius: 24px;
-      border: 1px solid #e2e8f0; padding: 24px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.06);
-      margin-bottom: 16px;
-    }
-    .card-title {
-      font-size: 13px; font-weight: 900; color: #64748b;
-      text-transform: uppercase; letter-spacing: .06em;
-      margin-bottom: 16px;
-    }
-
-    /* 로그인 */
-    .login-input {
-      width: 100%; padding: 14px 16px;
-      border: 2px solid #e2e8f0; border-radius: 16px;
-      font-size: 16px; font-weight: 700; color: #1e293b;
-      outline: none; transition: border-color 0.2s;
-      text-align: center; letter-spacing: .1em;
-    }
-    .login-input:focus { border-color: #6366f1; }
-    .login-input.error { border-color: #ef4444; }
-
-    .btn {
-      width: 100%; padding: 14px;
-      border: none; border-radius: 16px;
-      font-size: 15px; font-weight: 900; cursor: pointer;
-      transition: all 0.15s; margin-top: 12px;
-    }
+    .card { width: 100%; max-width: 480px; background: #fff; border-radius: 24px; border: 1px solid #e2e8f0; padding: 22px; box-shadow: 0 4px 20px rgba(0,0,0,0.06); margin-bottom: 14px; }
+    .card-title { font-size: 12px; font-weight: 900; color: #64748b; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 14px; }
+    .btn { width: 100%; padding: 14px; border: none; border-radius: 16px; font-size: 15px; font-weight: 900; cursor: pointer; transition: all 0.15s; margin-top: 10px; }
     .btn-primary { background: linear-gradient(135deg, #6366f1, #4338ca); color: #fff; }
     .btn-primary:active { transform: scale(0.97); }
     .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
     .btn-danger { background: #fef2f2; color: #ef4444; border: 1px solid #fecaca; }
-
-    /* 학생 정보 */
-    .student-info {
-      display: flex; align-items: center; gap: 12px;
-      padding: 12px 16px; background: #f1f5f9;
-      border-radius: 14px; margin-bottom: 16px;
-    }
-    .student-avatar {
-      width: 40px; height: 40px; border-radius: 50%;
-      background: linear-gradient(135deg, #6366f1, #4338ca);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 18px; color: #fff; font-weight: 900; flex-shrink: 0;
-    }
-    .student-name { font-size: 15px; font-weight: 900; color: #1e293b; }
-    .student-school { font-size: 11px; color: #94a3b8; font-weight: 600; }
-
-    /* 과제 선택 */
+    .login-input { width: 100%; padding: 14px 16px; border: 2px solid #e2e8f0; border-radius: 16px; font-size: 16px; font-weight: 700; color: #1e293b; outline: none; transition: border-color 0.2s; text-align: center; letter-spacing: .1em; }
+    .login-input:focus { border-color: #6366f1; }
+    .error-msg { color: #ef4444; font-size: 12px; font-weight: 700; text-align: center; margin-top: 8px; }
+    .student-info { display: flex; align-items: center; gap: 12px; padding: 12px 16px; background: #f1f5f9; border-radius: 14px; margin-bottom: 14px; }
+    .student-avatar { width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #6366f1, #4338ca); display: flex; align-items: center; justify-content: center; font-size: 18px; color: #fff; font-weight: 900; flex-shrink: 0; }
     .assign-list { display: flex; flex-direction: column; gap: 8px; }
-    .assign-item {
-      padding: 12px 16px; border-radius: 14px;
-      border: 2px solid #e2e8f0; cursor: pointer;
-      transition: all 0.15s; display: flex; align-items: center; gap-10px;
-    }
+    .assign-item { padding: 12px 16px; border-radius: 14px; border: 2px solid #e2e8f0; cursor: pointer; transition: all 0.15s; display: flex; align-items: center; }
     .assign-item:active { transform: scale(0.98); }
     .assign-item.selected { border-color: #6366f1; background: #eef2ff; }
-    .assign-item.done { border-color: #22c55e; background: #f0fdf4; opacity: 0.6; }
     .assign-title { font-size: 14px; font-weight: 900; color: #1e293b; }
     .assign-meta { font-size: 11px; color: #94a3b8; font-weight: 600; margin-top: 2px; }
-    .assign-status {
-      margin-left: auto; font-size: 10px; font-weight: 900;
-      padding: 3px 8px; border-radius: 10px; flex-shrink: 0;
-    }
+    .assign-status { margin-left: auto; font-size: 10px; font-weight: 900; padding: 3px 8px; border-radius: 10px; flex-shrink: 0; }
     .status-pending { background: #fef3c7; color: #d97706; }
     .status-done { background: #dcfce7; color: #16a34a; }
     .status-review { background: #e0e7ff; color: #4338ca; }
-
-    /* 사진 업로드 */
-    .upload-area {
-      border: 2px dashed #cbd5e1; border-radius: 16px;
-      padding: 32px 16px; text-align: center; cursor: pointer;
-      transition: all 0.2s; position: relative;
-    }
-    .upload-area:hover, .upload-area.dragover { border-color: #6366f1; background: #eef2ff; }
-    .upload-area input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
-    .upload-icon { font-size: 36px; margin-bottom: 8px; }
-    .upload-text { font-size: 14px; font-weight: 700; color: #64748b; }
-    .upload-hint { font-size: 11px; color: #94a3b8; margin-top: 4px; }
-
-    .preview-img {
-      width: 100%; border-radius: 14px;
-      object-fit: cover; max-height: 300px;
-      margin-top: 12px; display: none;
-    }
-
-    /* 토스트 */
-    #toast {
-      position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(100px);
-      background: #1e293b; color: #fff; padding: 12px 24px;
-      border-radius: 20px; font-size: 13px; font-weight: 700;
-      transition: transform 0.3s; z-index: 100; white-space: nowrap;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.2);
-    }
+    .upload-area { border: 2px dashed #cbd5e1; border-radius: 16px; padding: 28px 16px; text-align: center; cursor: pointer; transition: all 0.2s; position: relative; }
+    .upload-area input { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
+    .upload-area:hover { border-color: #6366f1; background: #eef2ff; }
+    .preview-img { width: 100%; border-radius: 14px; object-fit: cover; max-height: 300px; margin-top: 10px; display: none; }
+    .submit-item { padding: 12px; border-radius: 14px; border: 1px solid #e2e8f0; margin-bottom: 8px; }
+    .submit-item img { width: 100%; border-radius: 10px; margin-top: 8px; max-height: 200px; object-fit: cover; cursor: zoom-in; }
+    #toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(100px); background: #1e293b; color: #fff; padding: 12px 24px; border-radius: 20px; font-size: 13px; font-weight: 700; transition: transform 0.3s; z-index: 100; white-space: nowrap; box-shadow: 0 8px 24px rgba(0,0,0,0.2); }
     #toast.show { transform: translateX(-50%) translateY(0); }
-
-    .error-msg { color: #ef4444; font-size: 12px; font-weight: 700; text-align: center; margin-top: 8px; }
     .empty-msg { text-align: center; color: #cbd5e1; font-size: 14px; font-weight: 700; padding: 24px 0; }
+    .class-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .class-btn { padding: 18px 12px; border-radius: 16px; border: 2px solid #e2e8f0; background: #fff; cursor: pointer; font-size: 14px; font-weight: 900; color: #1e293b; transition: all 0.15s; -webkit-tap-highlight-color: transparent; }
+    .class-btn:active { transform: scale(0.96); background: #eef2ff; border-color: #6366f1; }
 
-    /* 제출 내역 */
-    .submit-item {
-      padding: 12px; border-radius: 14px;
-      border: 1px solid #e2e8f0; margin-bottom: 8px;
-    }
-    .submit-item img { width: 100%; border-radius: 10px; margin-top: 8px; max-height: 200px; object-fit: cover; }
-    .submit-approve { 
-      display: inline-block; margin-top: 8px;
-      font-size: 11px; font-weight: 900;
-      padding: 4px 12px; border-radius: 10px;
-      border: none; cursor: pointer;
-    }
-    .submit-approve.pending { background: #fef3c7; color: #d97706; }
-    .submit-approve.approved { background: #dcfce7; color: #16a34a; }
-
-    .loading { text-align: center; color: #94a3b8; font-size: 14px; padding: 32px; }
-
-    /* 이미지 뷰어 */
-    #viewer {
-      display: none; position: fixed; inset: 0; z-index: 200;
-      background: rgba(0,0,0,0.95);
-      flex-direction: column;
-    }
+    /* 뷰어 */
+    #viewer { display: none; position: fixed; inset: 0; z-index: 200; background: rgba(0,0,0,0.95); flex-direction: column; }
     #viewer.open { display: flex; }
-    .viewer-header {
-      padding: 16px 20px; display: flex; align-items: center;
-      justify-content: space-between; flex-shrink: 0;
-    }
-    .viewer-info { color: #fff; }
-    .viewer-name { font-size: 16px; font-weight: 900; }
+    .viewer-header { padding: 16px 20px; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
+    .viewer-name { font-size: 15px; font-weight: 900; color: #fff; }
     .viewer-assign { font-size: 12px; color: rgba(255,255,255,0.5); margin-top: 2px; }
-    .viewer-counter { font-size: 12px; color: rgba(255,255,255,0.4); font-weight: 700; }
-    .viewer-close {
-      width: 36px; height: 36px; border-radius: 50%;
-      background: rgba(255,255,255,0.1); border: none; cursor: pointer;
-      color: #fff; font-size: 18px; display: flex; align-items: center; justify-content: center;
-    }
-    .viewer-body {
-      flex: 1; display: flex; align-items: center; justify-content: center;
-      position: relative; overflow: hidden; touch-action: pan-y;
-    }
-    .viewer-img {
-      max-width: 100%; max-height: 100%;
-      object-fit: contain; user-select: none;
-      transition: transform 0.25s ease;
-    }
-    .viewer-nav {
-      position: absolute; top: 50%; transform: translateY(-50%);
-      width: 44px; height: 44px; border-radius: 50%;
-      background: rgba(255,255,255,0.15); border: none; cursor: pointer;
-      color: #fff; font-size: 20px; display: flex; align-items: center; justify-content: center;
-      -webkit-tap-highlight-color: transparent;
-    }
-    .viewer-nav:active { background: rgba(255,255,255,0.3); }
+    .viewer-close { width: 36px; height: 36px; border-radius: 50%; background: rgba(255,255,255,0.1); border: none; cursor: pointer; color: #fff; font-size: 18px; }
+    .viewer-body { flex: 1; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
+    .viewer-img { max-width: 100%; max-height: 100%; object-fit: contain; transition: opacity 0.2s; }
+    .viewer-nav { position: absolute; top: 50%; transform: translateY(-50%); width: 44px; height: 44px; border-radius: 50%; background: rgba(255,255,255,0.15); border: none; cursor: pointer; color: #fff; font-size: 22px; }
     .viewer-prev { left: 12px; }
     .viewer-next { right: 12px; }
-    .viewer-nav:disabled { opacity: 0.2; cursor: default; }
-    .viewer-footer {
-      padding: 16px 20px; display: flex; gap: 10px; flex-shrink: 0;
-    }
-    .viewer-approve {
-      flex: 1; padding: 14px; border: none; border-radius: 16px;
-      font-size: 15px; font-weight: 900; cursor: pointer;
-      transition: all 0.15s;
-    }
-    .viewer-approve.approve { background: #6366f1; color: #fff; }
-    .viewer-approve.approve:active { transform: scale(0.97); }
-    .viewer-approve.reject { background: rgba(255,255,255,0.1); color: #ef4444; }
-    .viewer-dots {
-      display: flex; justify-content: center; gap: 6px;
-      padding-bottom: 4px; flex-shrink: 0;
-    }
-    .viewer-dot {
-      width: 6px; height: 6px; border-radius: 50%;
-      background: rgba(255,255,255,0.2); transition: background 0.2s;
-    }
-    .viewer-dot.active { background: #fff; }
+    .viewer-nav:disabled { opacity: 0.2; }
+    .viewer-footer { padding: 16px 20px; display: flex; gap: 10px; flex-shrink: 0; }
+    .viewer-btn { flex: 1; padding: 14px; border: none; border-radius: 16px; font-size: 14px; font-weight: 900; cursor: pointer; }
+    .viewer-approve { background: #6366f1; color: #fff; }
+    .viewer-reject { background: rgba(255,255,255,0.1); color: #ef4444; }
+    .viewer-counter { font-size: 12px; color: rgba(255,255,255,0.4); font-weight: 700; }
   </style>
 </head>
 <body>
-
   <div class="header">
     <div class="logo">📸</div>
     <div class="title">과제 제출</div>
-    <div class="subtitle">제일학원 물리학반</div>
+    <div class="subtitle" id="subtitle">제일학원</div>
   </div>
+  <div id="app"></div>
+  <div id="toast"></div>
 
   <!-- 이미지 뷰어 -->
   <div id="viewer">
     <div class="viewer-header">
-      <div class="viewer-info">
+      <div>
         <div class="viewer-name" id="vw-name"></div>
         <div class="viewer-assign" id="vw-assign"></div>
       </div>
       <div style="display:flex;align-items:center;gap:12px">
         <span class="viewer-counter" id="vw-counter"></span>
-        <button class="viewer-close" onclick="closeViewer()">✕</button>
+        <button class="viewer-close" id="vw-close">✕</button>
       </div>
     </div>
-    <div class="viewer-dots" id="vw-dots"></div>
-    <div class="viewer-body" id="vw-body">
+    <div class="viewer-body">
       <img class="viewer-img" id="vw-img"/>
-      <button class="viewer-nav viewer-prev" id="vw-prev" onclick="viewerNav(-1)">‹</button>
-      <button class="viewer-nav viewer-next" id="vw-next" onclick="viewerNav(1)">›</button>
+      <button class="viewer-nav viewer-prev" id="vw-prev">‹</button>
+      <button class="viewer-nav viewer-next" id="vw-next">›</button>
     </div>
     <div class="viewer-footer">
-      <button class="viewer-approve reject" id="vw-reject" onclick="viewerReject()">✕ 삭제</button>
-      <button class="viewer-approve approve" id="vw-approve" onclick="viewerApprove()">✓ 승인 · 완료 처리</button>
+      <button class="viewer-btn viewer-reject" id="vw-reject">✕ 삭제</button>
+      <button class="viewer-btn viewer-approve" id="vw-approve">✓ 승인 · 완료 처리</button>
     </div>
   </div>
-
-  <div id="app"></div>
-  <div id="toast"></div>
 
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
   <script>
-    firebase.initializeApp({
-      apiKey: "AIzaSyBaWWriu3X7iVQnglR5XcA0Mqqc736VopM",
-      authDomain: "science-academy-13dda.firebaseapp.com",
-      projectId: "science-academy-13dda",
-      storageBucket: "science-academy-13dda.firebasestorage.app",
-      messagingSenderId: "449626746191",
-      appId: "1:449626746191:web:73885c6bb862a07655293a"
+  firebase.initializeApp({
+    apiKey: "AIzaSyBaWWriu3X7iVQnglR5XcA0Mqqc736VopM",
+    authDomain: "science-academy-13dda.firebaseapp.com",
+    projectId: "science-academy-13dda",
+    storageBucket: "science-academy-13dda.firebasestorage.app",
+    messagingSenderId: "449626746191",
+    appId: "1:449626746191:web:73885c6bb862a07655293a"
+  });
+  var db = firebase.firestore();
+  firebase.auth().signInAnonymously();
+
+  // ── 설정 ──
+  var CLASSES = [
+    { id: 'Jeil-science-Physics',     name: '물리학반'   },
+    { id: 'Jeil-science-Chem',        name: '화학반'     },
+    { id: 'Jeil-science-Biology',     name: '생명과학반' },
+    { id: 'Jeil-science-Muhak',       name: '무학반'     },
+    { id: 'Jeil-science-Dosun1',      name: '도선반'     },
+    { id: 'Jeil-science-Kyungil',     name: '경일반'     },
+    { id: 'Jeil-science-Seongdong1S', name: '성동1S반'   },
+    { id: 'Jeil-science-Seongdong1H', name: '성동1H반'   },
+  ];
+  var TEACHER_CODE = '26350';
+  var MASTER_CODE  = '847291';
+
+  // ── 상태 ──
+  var currentClass   = null;
+  var BASE           = null;
+  var currentRole    = null;
+  var currentStudent = null;
+  var students       = [];
+  var assignments    = [];
+  var submissions    = {};
+  var hwSubmissions  = {};
+  var selectedAssign = null;
+  var selectedFile   = null;
+  var teacherFilter  = 'all';
+  var touchStartX    = 0;
+  var viewerItems    = [];
+  var viewerIdx      = 0;
+  var prevPendingCount = null;
+
+  // ── 토스트 ──
+  function showToast(msg, dur) {
+    var t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(function(){ t.classList.remove('show'); }, dur||2500);
+  }
+
+  // ── 반 선택 ──
+  function renderClassSelect() {
+    document.getElementById('subtitle').textContent = '제일학원';
+    document.getElementById('app').innerHTML =
+      '<div class="card">' +
+        '<div class="card-title">🏫 반 선택</div>' +
+        '<div class="class-grid">' +
+          CLASSES.map(function(c){
+            return '<button class="class-btn" onclick="selectClass(\''+c.id+'\')">'+c.name+'</button>';
+          }).join('') +
+        '</div>' +
+      '</div>';
+  }
+
+  function selectClass(classId) {
+    currentClass = null;
+    for (var i=0; i<CLASSES.length; i++) { if (CLASSES[i].id === classId) { currentClass = CLASSES[i]; break; } }
+    BASE = 'artifacts/' + classId + '/public/data';
+    students=[]; assignments=[]; submissions={}; hwSubmissions={};
+    document.getElementById('subtitle').textContent = '제일학원 · ' + currentClass.name;
+    loadData(function(){ renderLogin(); });
+  }
+
+  // ── 데이터 로드 ──
+  function loadData(cb) {
+    var loaded = 0;
+    function check() { if (++loaded >= 3) cb(); }
+    db.collection(BASE+'/students').get().then(function(s){
+      students = s.docs.map(function(d){ return Object.assign({id:d.id},d.data()); });
+      check();
+      db.collection(BASE+'/students').onSnapshot(function(s){
+        students = s.docs.map(function(d){ return Object.assign({id:d.id},d.data()); });
+        if (currentRole==='teacher'||currentRole==='master') renderTeacher();
+        if (currentRole==='student') renderStudent();
+      });
     });
-    const db = firebase.firestore();
-    const auth = firebase.auth();
-
-    // 코드 검증
-    function checkCode(input) {
-      if (input === MASTER_CODE) return 'master';
-      if (input === TEACHER_CODE) return 'teacher';
-      return null;
-    }
-
-    // 상태
-    let currentStudent = null;
-    let currentRole = null; // 'student' | 'teacher' | 'master'
-    let students = [];
-    let assignments = [];
-    let submissions = {};
-    let hwSubmissions = {}; // 과제 사진 제출 내역
-    let selectedAssign = null;
-    let selectedFile = null;
-
-    // Firebase 익명 로그인
-    auth.signInAnonymously().catch(console.error);
-
-    // 토스트
-    function showToast(msg, duration=2500) {
-      const t = document.getElementById('toast');
-      t.textContent = msg;
-      t.classList.add('show');
-      setTimeout(() => t.classList.remove('show'), duration);
-    }
-
-    // 데이터 로드
-    function loadData(cb) {
-      // 초기 1회 get()으로 로드 후 콜백, 이후 실시간 구독
-      let loaded = 0;
-      const check = () => { if (++loaded >= 3) cb(); };
-
-      db.collection(BASE+'/students').get().then(s => {
-        students = s.docs.map(d => ({id:d.id,...d.data()}));
-        check();
-        // 이후 실시간
-        db.collection(BASE+'/students').onSnapshot(s => {
-          students = s.docs.map(d => ({id:d.id,...d.data()}));
-          if (currentRole==='teacher'||currentRole==='master') renderTeacher();
-          if (currentRole==='student') renderStudent();
-        });
+    db.collection(BASE+'/assignments').get().then(function(s){
+      assignments = s.docs.map(function(d){ return Object.assign({id:d.id},d.data()); }).sort(function(a,b){ return (a.sortOrder||0)-(b.sortOrder||0); });
+      check();
+      db.collection(BASE+'/assignments').onSnapshot(function(s){
+        assignments = s.docs.map(function(d){ return Object.assign({id:d.id},d.data()); }).sort(function(a,b){ return (a.sortOrder||0)-(b.sortOrder||0); });
+        if (currentRole==='student') renderStudent();
       });
-
-      db.collection(BASE+'/assignments').get().then(s => {
-        assignments = s.docs.map(d => ({id:d.id,...d.data()})).sort((a,b)=>(a.sortOrder||0)-(b.sortOrder||0));
-        check();
-        db.collection(BASE+'/assignments').onSnapshot(s => {
-          assignments = s.docs.map(d => ({id:d.id,...d.data()})).sort((a,b)=>(a.sortOrder||0)-(b.sortOrder||0));
-          if (currentRole==='student') renderStudent();
-        });
+    });
+    db.collection(BASE+'/submissions').get().then(function(s){
+      s.docs.forEach(function(d){ submissions[d.id]=d.data(); });
+      check();
+      db.collection(BASE+'/submissions').onSnapshot(function(s){
+        s.docs.forEach(function(d){ submissions[d.id]=d.data(); });
+        if (currentRole==='student') renderStudent();
       });
+    });
+  }
 
-      db.collection(BASE+'/submissions').get().then(s => {
-        s.docs.forEach(d => submissions[d.id] = d.data());
-        check();
-        db.collection(BASE+'/submissions').onSnapshot(s => {
-          s.docs.forEach(d => submissions[d.id] = d.data());
-          if (currentRole==='student') renderStudent();
-        });
-      });
-    }
+  function watchHwSubmissions() {
+    db.collection(BASE+'/hwSubmissions').orderBy('createdAt','desc').onSnapshot(function(s){
+      hwSubmissions = {};
+      s.docs.forEach(function(d){ hwSubmissions[d.id]=Object.assign({id:d.id},d.data()); });
+      var pendingNow = s.docs.filter(function(d){ return !d.data().approved; }).length;
+      if (prevPendingCount !== null && pendingNow > prevPendingCount && (currentRole==='teacher'||currentRole==='master')) {
+        var newest = s.docs.find(function(d){ return !d.data().approved; });
+        if (newest) showToast('📬 새 제출! '+newest.data().studentName+' · '+newest.data().assignTitle, 4000);
+      }
+      prevPendingCount = pendingNow;
+      if (currentRole==='teacher'||currentRole==='master') renderTeacher();
+      if (currentRole==='student') renderStudent();
+    });
+  }
 
-    // 과제 사진 제출 내역 실시간 감시
-    let prevPendingCount = null;
-    function watchHwSubmissions() {
-      db.collection(BASE+'/hwSubmissions').orderBy('createdAt','desc').onSnapshot(s => {
-        hwSubmissions = {};
-        s.docs.forEach(d => hwSubmissions[d.id] = {id:d.id,...d.data()});
+  // ── 로그인 ──
+  function renderLogin() {
+    document.getElementById('app').innerHTML =
+      '<div class="card">' +
+        '<div class="card-title">🔐 로그인 · '+currentClass.name+'</div>' +
+        '<input id="code-input" class="login-input" type="text" placeholder="학생 코드 입력" autocomplete="off"/>' +
+        '<p id="login-error" class="error-msg" style="display:none">코드가 올바르지 않습니다</p>' +
+        '<button class="btn btn-primary" onclick="tryLogin()">입장하기</button>' +
+        '<button class="btn" style="background:#f1f5f9;color:#64748b;margin-top:8px" onclick="renderClassSelect()">← 반 선택으로</button>' +
+      '</div>';
+    document.getElementById('code-input').addEventListener('keydown', function(e){ if(e.key==='Enter') tryLogin(); });
+  }
 
-        // 새 제출 알림
-        const pendingNow = s.docs.filter(d=>!d.data().approved).length;
-        if (prevPendingCount !== null && pendingNow > prevPendingCount && (currentRole==='teacher'||currentRole==='master')) {
-          const newest = s.docs.find(d=>!d.data().approved);
-          if (newest) showToast('📬 새 과제 제출! ' + newest.data().studentName + ' · ' + newest.data().assignTitle, 4000);
+  function tryLogin() {
+    var code = document.getElementById('code-input').value.trim();
+    var errEl = document.getElementById('login-error');
+    if (!code) return;
+    if (code === MASTER_CODE) { currentRole='master'; currentStudent=null; errEl.style.display='none'; watchHwSubmissions(); renderTeacher(); return; }
+    if (code === TEACHER_CODE) { currentRole='teacher'; currentStudent=null; errEl.style.display='none'; watchHwSubmissions(); renderTeacher(); return; }
+    var found = null;
+    for (var i=0; i<students.length; i++) { if (students[i].studentCode && students[i].studentCode.trim()===code) { found=students[i]; break; } }
+    if (found) { currentRole='student'; currentStudent=found; errEl.style.display='none'; watchHwSubmissions(); renderStudent(); }
+    else { errEl.style.display='block'; }
+  }
+
+  // ── 학생 화면 ──
+  function renderStudent() {
+    var myAssigns = assignments.filter(function(a){ return a.type==='all'||(a.targetStudents||[]).indexOf(currentStudent.id)>=0; });
+    var myHw = Object.values(hwSubmissions).filter(function(h){ return h.studentId===currentStudent.id; });
+    var assignHtml = myAssigns.length===0 ? '<div class="empty-msg">등록된 과제가 없습니다</div>' :
+      myAssigns.map(function(a){
+        var sub = submissions[currentStudent.id+'-'+a.id]||{};
+        var hw = null; for(var i=0;i<myHw.length;i++){ if(myHw[i].assignId===a.id){hw=myHw[i];break;} }
+        var statusHtml = '';
+        if (hw) { statusHtml = hw.approved ? '<span class="assign-status status-done">✓ 승인</span>' : '<span class="assign-status status-review">검토중 <span onclick="cancelHw(event,\''+hw.id+'\')" style="cursor:pointer">✕</span></span>'; }
+        else if (sub.status==='completed') { statusHtml = '<span class="assign-status status-done">완료</span>'; }
+        else { statusHtml = '<span class="assign-status status-pending">미제출</span>'; }
+        var isDone = hw && hw.approved;
+        return '<div class="assign-item'+(isDone?' done':'')+'" '+(isDone?'':'onclick="selectAssign(\''+a.id+'\')"')+' data-id="'+a.id+'">' +
+          '<div style="flex:1"><div class="assign-title">'+a.title+'</div><div class="assign-meta">'+(a.deadline||'마감일 미정')+(a.subject?' · '+a.subject:'')+'</div></div>' +
+          statusHtml+'</div>';
+      }).join('');
+    var hwHtml = myHw.length===0 ? '' :
+      '<div class="card"><div class="card-title">📬 제출 내역</div>' +
+      myHw.map(function(h){
+        var a = null; for(var i=0;i<assignments.length;i++){ if(assignments[i].id===h.assignId){a=assignments[i];break;} }
+        return '<div class="submit-item"><div style="display:flex;justify-content:space-between;align-items:center"><div><div style="font-size:13px;font-weight:900;color:#1e293b">'+(a?a.title:'과제')+'</div></div>' +
+          '<span class="assign-status '+(h.approved?'status-done':'status-review')+'">'+(h.approved?'✓ 승인':'검토중')+'</span></div>' +
+          '<img src="'+h.imageUrl+'" loading="lazy"/></div>';
+      }).join('')+'</div>';
+
+    document.getElementById('app').innerHTML =
+      '<div class="card">' +
+        '<div class="student-info">' +
+          '<div class="student-avatar">'+currentStudent.name[0]+'</div>' +
+          '<div><div style="font-size:15px;font-weight:900;color:#1e293b">'+currentStudent.name+'</div>' +
+          '<div style="font-size:11px;color:#94a3b8">'+(currentStudent.highSchool||'')+' · '+currentClass.name+'</div></div>' +
+          '<button onclick="logout()" style="margin-left:auto;background:none;border:none;cursor:pointer;font-size:18px;">⬅️</button>' +
+        '</div>' +
+        '<div class="card-title">📋 제출할 과제 선택</div>' +
+        '<div class="assign-list" id="assign-list">'+assignHtml+'</div>' +
+      '</div>' +
+      '<div class="card" id="upload-card" style="display:none">' +
+        '<div class="card-title">📸 사진 업로드</div>' +
+        '<p id="selected-assign-name" style="font-size:14px;font-weight:900;color:#6366f1;margin-bottom:12px"></p>' +
+        '<div class="upload-area"><input type="file" accept="image/*" capture="environment" id="file-input" onchange="onFileSelect(event)"/>' +
+          '<div style="font-size:32px;margin-bottom:8px">📷</div>' +
+          '<div style="font-size:14px;font-weight:700;color:#64748b">사진을 찍거나 파일을 선택하세요</div>' +
+          '<div style="font-size:11px;color:#94a3b8;margin-top:4px">JPG, PNG 등 이미지 파일</div>' +
+        '</div>' +
+        '<img id="preview-img" class="preview-img"/>' +
+        '<p id="file-size" style="text-align:center;font-size:11px;color:#94a3b8;margin-top:6px;font-weight:700"></p>' +
+        '<button class="btn btn-primary" id="submit-btn" onclick="submitPhoto()" disabled>제출하기</button>' +
+      '</div>' +
+      hwHtml;
+  }
+
+  function selectAssign(id) {
+    selectedAssign = id; selectedFile = null;
+    document.querySelectorAll('.assign-item').forEach(function(el){ el.classList.remove('selected'); });
+    var el = document.querySelector('[data-id="'+id+'"]');
+    if (el) { el.classList.add('selected'); }
+    var a = null; for(var i=0;i<assignments.length;i++){ if(assignments[i].id===id){a=assignments[i];break;} }
+    document.getElementById('upload-card').style.display='block';
+    document.getElementById('selected-assign-name').textContent = a ? '📌 '+a.title : '';
+    document.getElementById('preview-img').style.display='none';
+    document.getElementById('submit-btn').disabled=true;
+    document.getElementById('file-input').value='';
+    if (el) el.scrollIntoView({behavior:'smooth',block:'center'});
+  }
+
+  function cancelHw(e, hwId) {
+    e.stopPropagation();
+    if (!confirm('제출을 취소하고 다시 제출하시겠어요?')) return;
+    db.collection(BASE+'/hwSubmissions').doc(hwId).delete().then(function(){ showToast('제출이 취소되었습니다'); });
+  }
+
+  function onFileSelect(e) {
+    var file = e.target.files[0];
+    if (!file) return;
+    var reader = new FileReader();
+    reader.onload = function(ev) {
+      var img = new Image();
+      img.onload = function() {
+        var MAX=1200, w=img.width, h=img.height;
+        if(w>MAX||h>MAX){ if(w>h){h=Math.round(h*MAX/w);w=MAX;}else{w=Math.round(w*MAX/h);h=MAX;} }
+        var canvas=document.createElement('canvas'); canvas.width=w; canvas.height=h;
+        canvas.getContext('2d').drawImage(img,0,0,w,h);
+        function tryCompress(q) {
+          canvas.toBlob(function(blob){
+            if (blob.size>800*1024&&q>0.3){tryCompress(q-0.15);return;}
+            selectedFile=blob;
+            var prev=document.getElementById('preview-img');
+            prev.src=URL.createObjectURL(blob); prev.style.display='block';
+            document.getElementById('submit-btn').disabled=false;
+            var kb=Math.round(blob.size/1024);
+            var sizeEl=document.getElementById('file-size');
+            if(blob.size>800*1024){sizeEl.textContent='⚠️ 용량 초과';sizeEl.style.color='#ef4444';document.getElementById('submit-btn').disabled=true;}
+            else{sizeEl.textContent='✓ '+(kb<1024?kb+'KB':(blob.size/1024/1024).toFixed(1)+'MB');sizeEl.style.color='#22c55e';}
+          },'image/jpeg',q);
         }
-        prevPendingCount = pendingNow;
-
-        if (currentRole === 'teacher' || currentRole === 'master') renderTeacher();
-        if (currentRole === 'student') renderStudent();
-      });
-    }
-
-    // ── 반 선택 화면 ──
-    function renderClassSelect() {
-      document.getElementById('app').innerHTML = `
-        <div class="card">
-          <div class="card-title">🏫 반 선택</div>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-            ${CLASSES.map(cls => `
-              <button onclick="selectClass('${cls.id}')"
-                style="padding:16px 12px;border-radius:16px;border:2px solid #e2e8f0;background:#fff;cursor:pointer;font-size:14px;font-weight:900;color:#1e293b;transition:all 0.15s;-webkit-tap-highlight-color:transparent"
-                onmouseover="this.style.borderColor='#6366f1';this.style.background='#eef2ff'"
-                onmouseout="this.style.borderColor='#e2e8f0';this.style.background='#fff'">
-                ${cls.name}
-              </button>
-            `).join('')}
-          </div>
-        </div>`;
-    }
-
-    function selectClass(classId) {
-      currentClass = CLASSES.find(c => c.id === classId);
-      CLASS_ID = classId;
-      BASE = 'artifacts/' + CLASS_ID + '/public/data';
-      // 데이터 초기화
-      students = []; assignments = []; submissions = {}; hwSubmissions = {};
-      renderClassSelect();
-    }
-
-    // ── 로그인 화면 ──
-    function renderLogin() {
-      document.getElementById('app').innerHTML = `
-        <div class="card">
-          <div class="card-title">🔐 로그인</div>
-          <input id="code-input" class="login-input" type="text" placeholder="학생 코드 또는 선생님 코드" autocomplete="off" inputmode="text"/>
-          <p id="login-error" class="error-msg" style="display:none">코드가 올바르지 않습니다</p>
-          <button class="btn btn-primary" onclick="tryLogin()">입장하기</button>
-        </div>`;
-      document.getElementById('code-input').addEventListener('keydown', e => { if(e.key==='Enter') tryLogin(); });
-    }
-
-    function tryLogin() {
-      const code = document.getElementById('code-input').value.trim();
-      const errEl = document.getElementById('login-error');
-      if (!code) return;
-      const role = checkCode(code);
-      if (role === 'master' || role === 'teacher') {
-        currentRole=role; currentStudent=null; errEl.style.display='none'; watchHwSubmissions(); renderTeacher(); return;
-      }
-      const found = students.find(s => s.studentCode && s.studentCode.trim() === code);
-      if (found) {
-        currentRole='student'; currentStudent=found;
-        errEl.style.display='none';
-        watchHwSubmissions();
-        renderStudent();
-      } else {
-        errEl.style.display='block';
-        document.getElementById('code-input').classList.add('error');
-      }
-    }
-
-    // ── 학생 화면 ──
-    function renderStudent() {
-      const myAssigns = assignments.filter(a => a.type==='all' || (a.targetStudents||[]).includes(currentStudent.id));
-      // 이 학생의 제출 내역
-      const myHw = Object.values(hwSubmissions).filter(h => h.studentId === currentStudent.id);
-
-      document.getElementById('app').innerHTML = `
-        <div class="card">
-          <div class="student-info">
-            <div class="student-avatar">${currentStudent.name[0]}</div>
-            <div>
-              <div class="student-name">${currentStudent.name}</div>
-              <div class="student-school">${currentStudent.highSchool||''} · ${currentClass?currentClass.name:''}</div>
-            </div>
-            <button onclick="logout()" style="margin-left:auto;background:none;border:none;cursor:pointer;font-size:18px;">⬅️</button>
-          </div>
-
-          <div class="card-title">📋 제출할 과제 선택</div>
-          <div class="assign-list" id="assign-list">
-            ${myAssigns.length === 0 ? '<div class="empty-msg">등록된 과제가 없습니다</div>' :
-              myAssigns.map(a => {
-                const sub = submissions[currentStudent.id+'-'+a.id] || {};
-                const hw = myHw.find(h => h.assignId === a.id);
-                let statusHtml = '';
-                if (hw) {
-                  if (hw.approved) statusHtml = '<span class="assign-status status-done">✓ 승인완료</span>';
-                  else statusHtml = '<span class="assign-status status-review">검토중 <span onclick="cancelHw(event,\''+hw.id+'\')">✕</span></span>';
-                } else if (sub.status==='completed') {
-                  statusHtml = '<span class="assign-status status-done">완료</span>';
-                } else {
-                  statusHtml = '<span class="assign-status status-pending">미제출</span>';
-                }
-                const isDone = hw?.approved || false;
-                return `<div class="assign-item ${isDone?'done':''}" onclick="${isDone?'':(`selectAssign('`+a.id+`')`)}" data-id="${a.id}">
-                  <div style="flex:1">
-                    <div class="assign-title">${a.title}</div>
-                    <div class="assign-meta">${a.deadline||'마감일 미정'} ${a.subject?'· '+a.subject:''}</div>
-                  </div>
-                  ${statusHtml}
-                </div>`;
-              }).join('')}
-          </div>
-        </div>
-
-        <div class="card" id="upload-card" style="display:none">
-          <div class="card-title">📸 사진 업로드</div>
-          <p id="selected-assign-name" style="font-size:14px;font-weight:900;color:#6366f1;margin-bottom:12px"></p>
-          <div class="upload-area" id="upload-area">
-            <input type="file" accept="image/*" capture="environment" id="file-input" onchange="onFileSelect(event)"/>
-            <div class="upload-icon">📷</div>
-            <div class="upload-text">사진을 찍거나 파일을 선택하세요</div>
-            <div class="upload-hint">JPG, PNG 등 이미지 파일</div>
-          </div>
-          <img id="preview-img" class="preview-img"/>
-          <p id="file-size" style="text-align:center;font-size:11px;color:#94a3b8;margin-top:6px;font-weight:700"></p>
-          <button class="btn btn-primary" id="submit-btn" onclick="submitPhoto()" disabled>제출하기</button>
-        </div>
-
-        ${myHw.length > 0 ? `
-        <div class="card">
-          <div class="card-title">📬 제출 내역</div>
-          ${myHw.map(h => {
-            const a = assignments.find(x=>x.id===h.assignId);
-            return `<div class="submit-item">
-              <div style="display:flex;justify-content:space-between;align-items:center">
-                <div>
-                  <div style="font-size:13px;font-weight:900;color:#1e293b">${a?a.title:'과제'}</div>
-                  <div style="font-size:11px;color:#94a3b8">${h.createdAt?.toDate?.()?.toLocaleDateString('ko-KR')||''}</div>
-                </div>
-                <span class="submit-approve ${h.approved?'approved':'pending'}">${h.approved?'✓ 승인완료':'검토중'}</span>
-              </div>
-              <img src="${h.imageUrl}" loading="lazy"/>
-            </div>`;
-          }).join('')}
-        </div>` : ''}
-      `;
-    }
-
-    async function cancelHw(e, hwId) {
-      e.stopPropagation();
-      if (!confirm('제출을 취소하고 다시 제출하시겠어요?')) return;
-      await db.collection(BASE+'/hwSubmissions').doc(hwId).delete();
-      showToast('제출이 취소되었습니다');
-    }
-
-    function selectAssign(id) {
-      selectedAssign = id;
-      selectedFile = null;
-      document.querySelectorAll('.assign-item').forEach(el => el.classList.remove('selected'));
-      const el = document.querySelector('[data-id="'+id+'"]');
-      if(el) el.classList.add('selected');
-      const a = assignments.find(x=>x.id===id);
-      document.getElementById('upload-card').style.display='block';
-      document.getElementById('selected-assign-name').textContent = a ? '📌 '+a.title : '';
-      document.getElementById('preview-img').style.display='none';
-      document.getElementById('submit-btn').disabled = true;
-      document.getElementById('file-input').value = '';
-      el?.scrollIntoView({behavior:'smooth', block:'center'});
-    }
-
-    function onFileSelect(e) {
-      const file = e.target.files[0];
-      if (!file) return;
-
-      // Canvas로 이미지 압축 (최대 1200px, 품질 0.7)
-      const reader = new FileReader();
-      reader.onload = ev => {
-        const img = new Image();
-        img.onload = () => {
-          const MAX = 1200;
-          let w = img.width, h = img.height;
-          if (w > MAX || h > MAX) {
-            if (w > h) { h = Math.round(h * MAX / w); w = MAX; }
-            else { w = Math.round(w * MAX / h); h = MAX; }
-          }
-          const canvas = document.createElement('canvas');
-          canvas.width = w; canvas.height = h;
-          canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-          // 용량 체크: 800KB 초과 시 품질 더 낮춤
-          const tryCompress = (quality) => {
-            canvas.toBlob(blob => {
-              if (blob.size > 800*1024 && quality > 0.3) {
-                tryCompress(quality - 0.15); // 재귀로 품질 낮춤
-                return;
-              }
-              selectedFile = blob;
-              const preview = document.getElementById('preview-img');
-              preview.src = URL.createObjectURL(blob);
-              preview.style.display = 'block';
-              document.getElementById('submit-btn').disabled = false;
-              const kb = Math.round(blob.size / 1024);
-              const sizeEl = document.getElementById('file-size');
-              if (blob.size > 800*1024) {
-                sizeEl.textContent = '⚠️ 용량 초과 (' + (blob.size/1024/1024).toFixed(1) + 'MB) - 더 작은 이미지를 사용해주세요';
-                sizeEl.style.color = '#ef4444';
-                document.getElementById('submit-btn').disabled = true;
-              } else {
-                sizeEl.textContent = '✓ ' + (kb < 1024 ? kb+'KB' : (blob.size/1024/1024).toFixed(1)+'MB');
-                sizeEl.style.color = '#22c55e';
-              }
-            }, 'image/jpeg', quality);
-          };
-          tryCompress(0.75);
-        };
-        img.src = ev.target.result;
+        tryCompress(0.75);
       };
-      reader.readAsDataURL(file);
-    }
+      img.src=ev.target.result;
+    };
+    reader.readAsDataURL(file);
+  }
 
-    async function submitPhoto() {
-      if (!selectedFile || !selectedAssign || !currentStudent) return;
-      const btn = document.getElementById('submit-btn');
-      btn.disabled = true; btn.textContent = '저장 중...';
-
-      try {
-        // Base64로 변환
-        const base64 = await new Promise((res, rej) => {
-          const reader = new FileReader();
-          reader.onload = e => res(e.target.result); // data:image/jpeg;base64,...
-          reader.onerror = rej;
-          reader.readAsDataURL(selectedFile);
-        });
-
-        // Firestore에 Base64 이미지 저장
-        await db.collection(BASE+'/hwSubmissions').add({
-          studentId: currentStudent.id,
-          studentName: currentStudent.name,
-          studentSchool: currentStudent.highSchool || '',
-          assignId: selectedAssign,
-          assignTitle: assignments.find(a=>a.id===selectedAssign)?.title || '',
-          imageUrl: base64, // Base64 직접 저장
-          approved: false,
-          createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-        });
-
+  function submitPhoto() {
+    if (!selectedFile||!selectedAssign||!currentStudent) return;
+    var btn=document.getElementById('submit-btn');
+    btn.disabled=true; btn.textContent='저장 중...';
+    var reader=new FileReader();
+    reader.onload=function(e){
+      var base64=e.target.result;
+      var a=null; for(var i=0;i<assignments.length;i++){if(assignments[i].id===selectedAssign){a=assignments[i];break;}}
+      db.collection(BASE+'/hwSubmissions').add({
+        studentId:currentStudent.id, studentName:currentStudent.name,
+        studentSchool:currentStudent.highSchool||'',
+        assignId:selectedAssign, assignTitle:a?a.title:'',
+        imageUrl:base64, approved:false,
+        createdAt:firebase.firestore.FieldValue.serverTimestamp()
+      }).then(function(){
         showToast('✅ 제출 완료! 선생님 확인을 기다려주세요');
-        selectedAssign = null; selectedFile = null;
+        selectedAssign=null; selectedFile=null;
         document.getElementById('upload-card').style.display='none';
-      } catch(e) {
-        console.error(e);
-        showToast('❌ 저장 실패. 다시 시도해주세요');
-        btn.disabled = false; btn.textContent = '제출하기';
-      }
-    }
+      }).catch(function(err){ console.error(err); showToast('❌ 저장 실패'); btn.disabled=false; btn.textContent='제출하기'; });
+    };
+    reader.readAsDataURL(selectedFile);
+  }
 
-    let teacherFilter = 'all'; // 과제별 필터
+  // ── 선생님 화면 ──
+  function renderTeacher() {
+    var allHw = Object.values(hwSubmissions);
+    var assignIds = [];
+    allHw.forEach(function(h){ if(assignIds.indexOf(h.assignId)<0) assignIds.push(h.assignId); });
+    var pending = allHw.filter(function(h){ return !h.approved && (teacherFilter==='all'||h.assignId===teacherFilter); });
+    var approved = allHw.filter(function(h){ return h.approved && (teacherFilter==='all'||h.assignId===teacherFilter); });
 
-    // ── 선생님/마스터 화면 ──
-    function renderTeacher() {
-      const allPendingRaw = Object.values(hwSubmissions).filter(h => !h.approved);
-      const allApprovedRaw = Object.values(hwSubmissions).filter(h => h.approved);
-      const assignIds = [...new Set(Object.values(hwSubmissions).map(h => h.assignId))];
-      const pending = teacherFilter === 'all' ? allPendingRaw : allPendingRaw.filter(h => h.assignId === teacherFilter);
-      const approved = teacherFilter === 'all' ? allApprovedRaw : allApprovedRaw.filter(h => h.assignId === teacherFilter);
+    var filterHtml = assignIds.length>1 ?
+      '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px">' +
+        '<button onclick="teacherFilter=\'all\';renderTeacher()" style="padding:6px 12px;border-radius:10px;border:none;cursor:pointer;font-size:11px;font-weight:900;background:'+(teacherFilter==='all'?'#6366f1':'#f1f5f9')+';color:'+(teacherFilter==='all'?'#fff':'#475569')+'">전체</button>' +
+        assignIds.map(function(id){
+          var a=null; for(var i=0;i<assignments.length;i++){if(assignments[i].id===id){a=assignments[i];break;}}
+          return '<button onclick="teacherFilter=\''+id+'\';renderTeacher()" style="padding:6px 12px;border-radius:10px;border:none;cursor:pointer;font-size:11px;font-weight:900;background:'+(teacherFilter===id?'#6366f1':'#f1f5f9')+';color:'+(teacherFilter===id?'#fff':'#475569')+'">'+(a?a.title:'과제')+'</button>';
+        }).join('') +
+      '</div>' : '';
 
-      document.getElementById('app').innerHTML = `
-        <div class="card">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
-            <div>
-              <div class="card-title" style="margin-bottom:0">📬 과제 제출 현황</div>
-              <div style="font-size:11px;color:#94a3b8;margin-top:4px">${currentClass?currentClass.name:'반'} · ${currentRole==='master'?'MASTER':'선생님'}</div>
-            </div>
-            <button onclick="logout()" style="background:none;border:none;cursor:pointer;font-size:18px;">⬅️</button>
-          </div>
-          ${assignIds.length > 1 ? `
-          <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px">
-            <button onclick="teacherFilter='all';renderTeacher()" style="padding:6px 12px;border-radius:10px;border:none;cursor:pointer;font-size:11px;font-weight:900;background:${teacherFilter==='all'?'#6366f1':'#f1f5f9'};color:${teacherFilter==='all'?'#fff':'#475569'}">전체</button>
-            ${assignIds.map(id=>{const a=assignments.find(x=>x.id===id); return `<button onclick="teacherFilter='${id}';renderTeacher()" style="padding:6px 12px;border-radius:10px;border:none;cursor:pointer;font-size:11px;font-weight:900;background:${teacherFilter===id?'#6366f1':'#f1f5f9'};color:${teacherFilter===id?'#fff':'#475569'}">${a?a.title:'과제'}</button>`;}).join('')}
-          </div>` : ''}
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px">
-            <div style="background:#fef3c7;border-radius:14px;padding:12px;text-align:center">
-              <div style="font-size:24px;font-weight:900;color:#d97706">${pending.length}</div>
-              <div style="font-size:11px;color:#d97706;font-weight:700">검토 대기</div>
-            </div>
-            <div style="background:#dcfce7;border-radius:14px;padding:12px;text-align:center">
-              <div style="font-size:24px;font-weight:900;color:#16a34a">${approved.length}</div>
-              <div style="font-size:11px;color:#16a34a;font-weight:700">승인 완료</div>
-            </div>
-          </div>
-        </div>
+    var studentSummary = '<div class="card"><div class="card-title">👥 학생별 제출 현황</div>' +
+      [...students].sort(function(a,b){return a.name.localeCompare(b.name,'ko');}).map(function(s){
+        var sHw=allHw.filter(function(h){return h.studentId===s.id;});
+        var ap=sHw.filter(function(h){return h.approved;}).length;
+        var pe=sHw.filter(function(h){return !h.approved;}).length;
+        return '<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 12px;background:#f8fafc;border-radius:10px;margin-bottom:6px">' +
+          '<div><span style="font-size:13px;font-weight:900;color:#1e293b">'+s.name+'</span><span style="font-size:11px;color:#94a3b8;margin-left:6px">'+(s.highSchool||'')+'</span></div>' +
+          '<div style="display:flex;gap:6px">' +
+            (pe>0?'<span style="font-size:11px;font-weight:900;background:#fef3c7;color:#d97706;padding:3px 8px;border-radius:8px">'+pe+'건 대기</span>':'') +
+            (ap>0?'<span style="font-size:11px;font-weight:900;background:#dcfce7;color:#16a34a;padding:3px 8px;border-radius:8px">'+ap+'건 완료</span>':'') +
+            (sHw.length===0?'<span style="font-size:11px;color:#cbd5e1;font-weight:700">미제출</span>':'') +
+          '</div></div>';
+      }).join('') + '</div>';
 
-        ${pending.length > 0 ? `
-        <div class="card">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
-            <div class="card-title" style="margin-bottom:0">⏳ 검토 대기 (${pending.length}건)</div>
-            <button onclick="openViewer(pending,0)" style="padding:8px 14px;background:#6366f1;color:#fff;border:none;border-radius:12px;font-size:12px;font-weight:900;cursor:pointer;">📋 전체 검토</button>
-          </div>
-          ${pending.map(h => `
-            <div class="submit-item">
-              <div style="display:flex;justify-content:space-between;align-items:flex-start">
-                <div>
-                  <div style="font-size:14px;font-weight:900;color:#1e293b">${h.studentName}</div>
-                  <div style="font-size:11px;color:#94a3b8;margin-top:2px">${h.assignTitle}</div>
-                  <div style="font-size:11px;color:#94a3b8">${h.studentSchool}</div>
-                </div>
-                <div style="font-size:11px;color:#94a3b8">${h.createdAt?.toDate?.()?.toLocaleDateString('ko-KR')||''}</div>
-              </div>
-              <img src="${h.imageUrl}" loading="lazy" style="cursor:zoom-in" onclick="openViewer(pending,${pending.indexOf(h)})"/>
-              <div style="display:flex;gap:8px;margin-top:10px">
-                <button onclick="openViewer(pending,${pending.indexOf(h)})" style="flex:1;padding:10px;background:#f1f5f9;color:#475569;border:none;border-radius:12px;font-size:13px;font-weight:900;cursor:pointer;">🔍 크게 보기</button>
-                <button onclick="approveHw('${h.id}','${h.studentId}','${h.assignId}')" style="flex:1;padding:10px;background:#6366f1;color:#fff;border:none;border-radius:12px;font-size:13px;font-weight:900;cursor:pointer;">✓ 승인</button>
-                <button onclick="rejectHw('${h.id}')" style="padding:10px 14px;background:#fef2f2;color:#ef4444;border:1px solid #fecaca;border-radius:12px;font-size:13px;font-weight:900;cursor:pointer;">✕</button>
-              </div>
-            </div>`).join('')}
-        </div>` : `<div class="card"><div class="empty-msg">검토 대기 중인 과제가 없습니다 🎉</div></div>`}
+    var pendingHtml = pending.length===0 ? '<div class="card"><div class="empty-msg">검토 대기 중인 과제가 없습니다 🎉</div></div>' :
+      '<div class="card">' +
+        '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">' +
+          '<div class="card-title" style="margin-bottom:0">⏳ 검토 대기 ('+pending.length+'건)</div>' +
+          '<button onclick="openViewer(0)" style="padding:7px 14px;background:#6366f1;color:#fff;border:none;border-radius:12px;font-size:12px;font-weight:900;cursor:pointer">📋 전체 검토</button>' +
+        '</div>' +
+        filterHtml +
+        pending.map(function(h,i){
+          return '<div class="submit-item">' +
+            '<div style="display:flex;justify-content:space-between"><div>' +
+              '<div style="font-size:14px;font-weight:900;color:#1e293b">'+h.studentName+'</div>' +
+              '<div style="font-size:11px;color:#94a3b8">'+h.assignTitle+' · '+(h.studentSchool||'')+'</div></div>' +
+              '<div style="font-size:11px;color:#94a3b8">'+(h.createdAt&&h.createdAt.toDate?h.createdAt.toDate().toLocaleDateString('ko-KR'):'')+'</div>' +
+            '</div>' +
+            '<img src="'+h.imageUrl+'" loading="lazy" onclick="openViewer('+i+')"/>' +
+            '<div style="display:flex;gap:8px;margin-top:10px">' +
+              '<button onclick="openViewer('+i+')" style="flex:1;padding:9px;background:#f1f5f9;color:#475569;border:none;border-radius:12px;font-size:12px;font-weight:900;cursor:pointer">🔍 크게 보기</button>' +
+              '<button onclick="approveHw(\''+h.id+'\',\''+h.studentId+'\',\''+h.assignId+'\')" style="flex:1;padding:9px;background:#6366f1;color:#fff;border:none;border-radius:12px;font-size:12px;font-weight:900;cursor:pointer">✓ 승인</button>' +
+              '<button onclick="rejectHw(\''+h.id+'\')" style="padding:9px 13px;background:#fef2f2;color:#ef4444;border:1px solid #fecaca;border-radius:12px;font-size:12px;font-weight:900;cursor:pointer">✕</button>' +
+            '</div></div>';
+        }).join('') +
+      '</div>';
 
-        <!-- 학생별 현황 요약 -->
-        <div class="card">
-          <div class="card-title">👥 학생별 제출 현황</div>
-          <div style="display:flex;flex-direction:column;gap:6px">
-          ${[...students].sort((a,b)=>a.name.localeCompare(b.name,'ko')).map(s => {
-            const sHw = Object.values(hwSubmissions).filter(h=>h.studentId===s.id);
-            const approved_count = sHw.filter(h=>h.approved).length;
-            const pending_count = sHw.filter(h=>!h.approved).length;
-            if(!sHw.length) return `<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 12px;background:#f8fafc;border-radius:10px">
-              <span style="font-size:13px;font-weight:900;color:#1e293b">${s.name}</span>
-              <span style="font-size:11px;color:#cbd5e1;font-weight:700">미제출</span>
-            </div>`;
-            return `<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 12px;background:#f8fafc;border-radius:10px">
-              <div>
-                <span style="font-size:13px;font-weight:900;color:#1e293b">${s.name}</span>
-                <span style="font-size:11px;color:#94a3b8;margin-left:6px">${s.highSchool||''}</span>
-              </div>
-              <div style="display:flex;gap:6px">
-                ${pending_count>0?`<span style="font-size:11px;font-weight:900;background:#fef3c7;color:#d97706;padding:3px 8px;border-radius:8px">${pending_count}건 대기</span>`:''}
-                ${approved_count>0?`<span style="font-size:11px;font-weight:900;background:#dcfce7;color:#16a34a;padding:3px 8px;border-radius:8px">${approved_count}건 완료</span>`:''}
-              </div>
-            </div>`;
-          }).join('')}
-          </div>
-        </div>
+    document.getElementById('app').innerHTML =
+      '<div class="card">' +
+        '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">' +
+          '<div><div class="card-title" style="margin-bottom:0">📬 과제 제출 현황</div>' +
+          '<div style="font-size:11px;color:#94a3b8;margin-top:4px">'+currentClass.name+' · '+(currentRole==='master'?'MASTER':'선생님')+'</div></div>' +
+          '<button onclick="logout()" style="background:none;border:none;cursor:pointer;font-size:18px;">⬅️</button>' +
+        '</div>' +
+        '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">' +
+          '<div style="background:#fef3c7;border-radius:14px;padding:12px;text-align:center"><div style="font-size:24px;font-weight:900;color:#d97706">'+pending.length+'</div><div style="font-size:11px;color:#d97706;font-weight:700">검토 대기</div></div>' +
+          '<div style="background:#dcfce7;border-radius:14px;padding:12px;text-align:center"><div style="font-size:24px;font-weight:900;color:#16a34a">'+approved.length+'</div><div style="font-size:11px;color:#16a34a;font-weight:700">승인 완료</div></div>' +
+        '</div>' +
+      '</div>' +
+      pendingHtml + studentSummary;
 
-        ${approved.length > 0 ? `
-        <div class="card">
-          <div class="card-title">✅ 승인 완료 (${approved.length}건)</div>
-          ${approved.slice(0,10).map(h => `
-            <div class="submit-item" style="opacity:0.7">
-              <div style="display:flex;justify-content:space-between">
-                <div>
-                  <div style="font-size:13px;font-weight:900;color:#1e293b">${h.studentName} · ${h.assignTitle}</div>
-                  <div style="font-size:11px;color:#94a3b8">${h.studentSchool}</div>
-                </div>
-                <span style="font-size:11px;font-weight:900;color:#16a34a;background:#dcfce7;padding:3px 8px;border-radius:10px;height:fit-content">✓ 완료</span>
-              </div>
-            </div>`).join('')}
-        </div>` : ''}
-      `;
-    }
+    // 뷰어 items 업데이트
+    viewerItems = pending;
+  }
 
-    async function approveHw(hwId, studentId, assignId) {
-      try {
-        // 제출 내역 승인 처리
-        await db.collection(BASE+'/hwSubmissions').doc(hwId).update({ approved: true, approvedAt: firebase.firestore.FieldValue.serverTimestamp() });
-        // 기존 앱 submissions에도 완료 처리
-        const today = new Date(Date.now()+9*60*60*1000).toISOString().split('T')[0];
-        await db.collection(BASE+'/submissions').doc(studentId+'-'+assignId).set({ status: 'completed', completionDate: today }, { merge: true });
-        showToast('✅ 승인 완료! 과제가 완료 처리되었습니다');
-      } catch(e) {
-        console.error(e); showToast('❌ 오류 발생');
-      }
-    }
+  function approveHw(hwId, studentId, assignId) {
+    var today = new Date(Date.now()+9*60*60*1000).toISOString().split('T')[0];
+    db.collection(BASE+'/hwSubmissions').doc(hwId).update({ approved:true, approvedAt:firebase.firestore.FieldValue.serverTimestamp() }).then(function(){
+      db.collection(BASE+'/submissions').doc(studentId+'-'+assignId).set({ status:'completed', completionDate:today }, { merge:true });
+      showToast('✅ 승인 완료!');
+    });
+  }
 
-    async function rejectHw(hwId) {
-      if (!confirm('이 제출을 삭제할까요?')) return;
-      try {
-        await db.collection(BASE+'/hwSubmissions').doc(hwId).delete();
-        showToast('🗑️ 삭제되었습니다');
-      } catch(e) {
-        showToast('❌ 오류 발생');
-      }
-    }
+  function rejectHw(hwId) {
+    if (!confirm('이 제출을 삭제할까요?')) return;
+    db.collection(BASE+'/hwSubmissions').doc(hwId).delete().then(function(){ showToast('🗑️ 삭제되었습니다'); });
+  }
 
-    // ── 이미지 뷰어 ──
-    let viewerItems = [];
-    let viewerIdx = 0;
-    let touchStartX = 0;
+  // ── 뷰어 ──
+  function openViewer(idx) {
+    if (!viewerItems.length) return;
+    viewerIdx = idx;
+    updateViewer();
+    document.getElementById('viewer').classList.add('open');
+    document.body.style.overflow='hidden';
+  }
 
-    function openViewer(items, idx) {
-      viewerItems = items;
-      viewerIdx = idx;
-      updateViewer();
-      document.getElementById('viewer').classList.add('open');
-      document.body.style.overflow = 'hidden';
+  function updateViewer() {
+    var h = viewerItems[viewerIdx];
+    if (!h) return;
+    document.getElementById('vw-img').src = h.imageUrl;
+    document.getElementById('vw-name').textContent = h.studentName;
+    document.getElementById('vw-assign').textContent = '📌 '+h.assignTitle;
+    document.getElementById('vw-counter').textContent = (viewerIdx+1)+' / '+viewerItems.length;
+    document.getElementById('vw-prev').disabled = viewerIdx===0;
+    document.getElementById('vw-next').disabled = viewerIdx===viewerItems.length-1;
+    var approveBtn = document.getElementById('vw-approve');
+    if (h.approved) { approveBtn.textContent='✓ 승인완료'; approveBtn.style.background='#22c55e'; approveBtn.disabled=true; }
+    else { approveBtn.textContent='✓ 승인 · 완료 처리'; approveBtn.style.background=''; approveBtn.disabled=false; }
+  }
 
-      // 스와이프
-      const body = document.getElementById('vw-body');
-      body.ontouchstart = e => { touchStartX = e.touches[0].clientX; };
-      body.ontouchend = e => {
-        const dx = e.changedTouches[0].clientX - touchStartX;
-        if (Math.abs(dx) > 50) viewerNav(dx < 0 ? 1 : -1);
-      };
-    }
+  document.getElementById('vw-close').onclick = function(){ document.getElementById('viewer').classList.remove('open'); document.body.style.overflow=''; };
+  document.getElementById('vw-prev').onclick = function(){ if(viewerIdx>0){ viewerIdx--; updateViewer(); } };
+  document.getElementById('vw-next').onclick = function(){ if(viewerIdx<viewerItems.length-1){ viewerIdx++; updateViewer(); } };
+  document.getElementById('vw-approve').onclick = function(){
+    var h=viewerItems[viewerIdx];
+    approveHw(h.id,h.studentId,h.assignId);
+    viewerItems[viewerIdx].approved=true;
+    updateViewer();
+    if(viewerIdx<viewerItems.length-1) setTimeout(function(){ viewerIdx++; updateViewer(); },400);
+  };
+  document.getElementById('vw-reject').onclick = function(){
+    var h=viewerItems[viewerIdx];
+    if(!confirm(h.studentName+'의 제출을 삭제할까요?')) return;
+    rejectHw(h.id);
+    viewerItems.splice(viewerIdx,1);
+    if(!viewerItems.length){ document.getElementById('viewer').classList.remove('open'); document.body.style.overflow=''; return; }
+    if(viewerIdx>=viewerItems.length) viewerIdx=viewerItems.length-1;
+    updateViewer();
+  };
+  // 스와이프
+  document.getElementById('viewer').addEventListener('touchstart', function(e){ touchStartX=e.touches[0].clientX; });
+  document.getElementById('viewer').addEventListener('touchend', function(e){
+    var dx=e.changedTouches[0].clientX-touchStartX;
+    if(Math.abs(dx)>50){ if(dx<0&&viewerIdx<viewerItems.length-1){viewerIdx++;updateViewer();} else if(dx>0&&viewerIdx>0){viewerIdx--;updateViewer();} }
+  });
 
-    function closeViewer() {
-      document.getElementById('viewer').classList.remove('open');
-      document.body.style.overflow = '';
-    }
-
-    function updateViewer() {
-      const h = viewerItems[viewerIdx];
-      document.getElementById('vw-img').src = h.imageUrl;
-      document.getElementById('vw-name').textContent = h.studentName + ' · ' + h.studentSchool;
-      document.getElementById('vw-assign').textContent = '📌 ' + h.assignTitle;
-      document.getElementById('vw-counter').textContent = (viewerIdx+1) + ' / ' + viewerItems.length;
-      document.getElementById('vw-prev').disabled = viewerIdx === 0;
-      document.getElementById('vw-next').disabled = viewerIdx === viewerItems.length-1;
-      // 승인 상태 반영
-      const approveBtn = document.getElementById('vw-approve');
-      if (h.approved) {
-        approveBtn.textContent = '✓ 승인 완료';
-        approveBtn.style.background = '#22c55e';
-        approveBtn.disabled = true;
-      } else {
-        approveBtn.textContent = '✓ 승인 · 완료 처리';
-        approveBtn.style.background = '';
-        approveBtn.disabled = false;
-      }
-      // 도트
-      const dots = document.getElementById('vw-dots');
-      dots.innerHTML = viewerItems.map((_,i) =>
-        '<div class="viewer-dot'+(i===viewerIdx?' active':'')+'"></div>'
-      ).join('');
-    }
-
-    function viewerNav(dir) {
-      const next = viewerIdx + dir;
-      if (next < 0 || next >= viewerItems.length) return;
-      // 슬라이드 애니메이션
-      const img = document.getElementById('vw-img');
-      img.style.transform = 'translateX('+(dir<0?'60px':'-60px')+') opacity(0)';
-      img.style.opacity = '0';
-      setTimeout(() => {
-        viewerIdx = next;
-        updateViewer();
-        img.style.transform = 'translateX('+(dir<0?'-60px':'60px')+')';
-        img.style.opacity = '0';
-        requestAnimationFrame(() => {
-          img.style.transform = '';
-          img.style.opacity = '1';
-        });
-      }, 150);
-    }
-
-    async function viewerApprove() {
-      const h = viewerItems[viewerIdx];
-      await approveHw(h.id, h.studentId, h.assignId);
-      viewerItems[viewerIdx].approved = true;
-      updateViewer();
-      // 자동으로 다음으로 이동
-      if (viewerIdx < viewerItems.length-1) setTimeout(() => viewerNav(1), 400);
-    }
-
-    async function viewerReject() {
-      const h = viewerItems[viewerIdx];
-      if (!confirm(h.studentName + '의 제출을 삭제할까요?')) return;
-      await rejectHw(h.id);
-      viewerItems.splice(viewerIdx, 1);
-      if (viewerItems.length === 0) { closeViewer(); return; }
-      if (viewerIdx >= viewerItems.length) viewerIdx = viewerItems.length-1;
-      updateViewer();
-    }
-
-    function logout() {
-      currentStudent = null; currentRole = null;
-      selectedAssign = null; selectedFile = null;
-      currentClass = null; CLASS_ID = null; BASE = null;
-      students = []; assignments = []; submissions = {}; hwSubmissions = {};
-      renderClassSelect();
-    }
-
-    // 초기화
+  function logout() {
+    currentRole=null; currentStudent=null; selectedAssign=null; selectedFile=null;
+    teacherFilter='all'; prevPendingCount=null;
     renderClassSelect();
+  }
+
+  // ── 초기화 ──
+  renderClassSelect();
   </script>
 </body>
 </html>
