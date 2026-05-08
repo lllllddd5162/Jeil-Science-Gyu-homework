@@ -254,8 +254,8 @@
     const BASE = 'artifacts/' + CLASS_ID + '/public/data';
     // 코드 검증
     function checkCode(input) {
-      if (input === '71207179') return 'master';
-      if (input === '26350') return 'teacher';
+      if (input === MASTER_CODE) return 'master';
+      if (input === TEACHER_CODE) return 'teacher';
       return null;
     }
 
@@ -336,6 +336,33 @@
       });
     }
 
+    // ── 반 선택 화면 ──
+    function renderClassSelect() {
+      document.getElementById('app').innerHTML = `
+        <div class="card">
+          <div class="card-title">🏫 반 선택</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+            ${CLASSES.map(cls => `
+              <button onclick="selectClass('${cls.id}')"
+                style="padding:16px 12px;border-radius:16px;border:2px solid #e2e8f0;background:#fff;cursor:pointer;font-size:14px;font-weight:900;color:#1e293b;transition:all 0.15s;-webkit-tap-highlight-color:transparent"
+                onmouseover="this.style.borderColor='#6366f1';this.style.background='#eef2ff'"
+                onmouseout="this.style.borderColor='#e2e8f0';this.style.background='#fff'">
+                ${cls.name}
+              </button>
+            `).join('')}
+          </div>
+        </div>`;
+    }
+
+    function selectClass(classId) {
+      currentClass = CLASSES.find(c => c.id === classId);
+      CLASS_ID = classId;
+      BASE = 'artifacts/' + CLASS_ID + '/public/data';
+      // 데이터 초기화
+      students = []; assignments = []; submissions = {}; hwSubmissions = {};
+      renderClassSelect();
+    }
+
     // ── 로그인 화면 ──
     function renderLogin() {
       document.getElementById('app').innerHTML = `
@@ -380,7 +407,7 @@
             <div class="student-avatar">${currentStudent.name[0]}</div>
             <div>
               <div class="student-name">${currentStudent.name}</div>
-              <div class="student-school">${currentStudent.highSchool||''} · 물리학반</div>
+              <div class="student-school">${currentStudent.highSchool||''} · ${currentClass?currentClass.name:''}</div>
             </div>
             <button onclick="logout()" style="margin-left:auto;background:none;border:none;cursor:pointer;font-size:18px;">⬅️</button>
           </div>
@@ -568,7 +595,7 @@
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
             <div>
               <div class="card-title" style="margin-bottom:0">📬 과제 제출 현황</div>
-              <div style="font-size:11px;color:#94a3b8;margin-top:4px">물리학반 · ${currentRole==='master'?'MASTER':'선생님'}</div>
+              <div style="font-size:11px;color:#94a3b8;margin-top:4px">${currentClass?currentClass.name:'반'} · ${currentRole==='master'?'MASTER':'선생님'}</div>
             </div>
             <button onclick="logout()" style="background:none;border:none;cursor:pointer;font-size:18px;">⬅️</button>
           </div>
@@ -773,7 +800,9 @@
     function logout() {
       currentStudent = null; currentRole = null;
       selectedAssign = null; selectedFile = null;
-      renderLogin();
+      currentClass = null; CLASS_ID = null; BASE = null;
+      students = []; assignments = []; submissions = {}; hwSubmissions = {};
+      renderClassSelect();
     }
 
     // 초기화
