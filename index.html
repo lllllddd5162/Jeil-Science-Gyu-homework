@@ -618,7 +618,7 @@
         <div class="card">
           <div class="card-title">👥 학생별 제출 현황</div>
           <div style="display:flex;flex-direction:column;gap:6px">
-          ${students.map(s => {
+          ${[...students].sort((a,b)=>a.name.localeCompare(b.name,'ko')).map(s => {
             const sHw = Object.values(hwSubmissions).filter(h=>h.studentId===s.id);
             const approved_count = sHw.filter(h=>h.approved).length;
             const pending_count = sHw.filter(h=>!h.approved).length;
