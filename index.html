@@ -158,10 +158,13 @@
     document.getElementById('app').innerHTML =
       '<div class="card">' +
         '<div class="card-title">🏫 반 선택</div>' +
+        '<div style="font-size:11px;font-weight:900;color:#94a3b8;margin-bottom:8px;">🎓 고2</div>' +
+        '<div class="class-grid" style="margin-bottom:16px">' +
+          CLASSES.slice(0,3).map(function(c){ return '<button class="class-btn" onclick="selectClass(\''+c.id+'\')">'+c.name+'</button>'; }).join('') +
+        '</div>' +
+        '<div style="font-size:11px;font-weight:900;color:#94a3b8;margin-bottom:8px;">📘 고1</div>' +
         '<div class="class-grid">' +
-          CLASSES.map(function(c){
-            return '<button class="class-btn" onclick="selectClass(\''+c.id+'\')">'+c.name+'</button>';
-          }).join('') +
+          CLASSES.slice(3).map(function(c){ return '<button class="class-btn" onclick="selectClass(\''+c.id+'\')">'+c.name+'</button>'; }).join('') +
         '</div>' +
       '</div>';
   }
